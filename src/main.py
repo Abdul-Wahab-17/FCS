@@ -12,6 +12,7 @@ if __package__ is None or __package__ == "":
 
 from fastapi import FastAPI, File, HTTPException, Query, UploadFile, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
+import json
 from fastapi.responses import Response
 from pydantic import BaseModel
 
@@ -56,6 +57,8 @@ app.add_middleware(
 async def run_pipeline(video_path: str) -> list[dict]:
     detections = detector.process_video(video_path)
     reports = []
+    
+    # Generate all reports first
     for detection in detections:
         detection_data = detection.to_dict()
         decision = classifier.classify(detection_data)
@@ -66,9 +69,13 @@ async def run_pipeline(video_path: str) -> list[dict]:
             escalation_action=action,
             rationale=decision.rationale,
         )
-        await router.route_report(report)
-        reports.append(report.model_dump())
-    return reports
+        reports.append(report)
+        
+    # Route them as a clip batch
+    if reports:
+        await router.route_clip_violations(reports)
+        
+    return [r.model_dump() for r in reports]
 
 
 @app.get("/api/health")
@@ -105,15 +112,40 @@ async def upload_video(file: UploadFile = File(...)) -> dict:
 
 @app.post("/api/demo/seed")
 async def seed_demo_records() -> dict:
-    sample_paths = [
-        "data/test/Safe_Walkway_Violation/demo_walkway.mp4",
-        "data/test/Unauthorized_Intervention/demo_intervention.mp4",
-        "data/test/Opened_Panel_Cover/demo_panel.mp4",
-        "data/test/Carrying_Overload_with_Forklift/demo_overload.mp4",
-    ]
+    import time
+    from src.severity.classifier import SeverityTier
     reports: list[dict] = []
-    for sample in sample_paths:
-        reports.extend(await run_pipeline(sample))
+    
+    # Mock some reports directly to bypass needing real videos
+    for behavior in ["Safe_Walkway_Violation", "Unauthorized_Intervention", "Opened_Panel_Cover", "Carrying_Overload_with_Forklift"]:
+        # Generate a detection dict for the demo
+        detection = {
+            "clip_id": "demo_clip",
+            "timestamp": time.time(),
+            "behavior_class": behavior,
+            "description": "Demo detection",
+            "zone": "Production_Floor",
+            "confidence": 0.95,
+            "frame_number": 10,
+            "bounding_box": [0, 0, 100, 100],
+            "policy_rule_ref": "Demo",
+            "metadata": {},
+        }
+        # Classify severity using the real classifier
+        decision = classifier.classify(detection)
+        severity_val = decision.severity.value
+        escalation_action = RoutingRule.action_for_severity(severity_val)
+        report = generator.generate(
+            detection=detection,
+            severity=severity_val,
+            escalation_action=escalation_action,
+            rationale=decision.rationale,
+        )
+        reports.append(report.model_dump())
+        
+    if reports:
+        await router.route_clip_violations(reports)
+        
     return {"status": "success", "count": len(reports), "reports": reports}
 
 
@@ -142,6 +174,29 @@ async def get_violation(event_id: str) -> dict:
     if violation is None:
         raise HTTPException(status_code=404, detail="Violation not found")
     return violation
+
+@app.get("/api/policy/rules")
+async def get_policy_rules() -> dict:
+    try:
+        with open(settings.rules_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+@app.get("/api/policy/rules/{rule_id}")
+async def get_policy_rule(rule_id: str) -> dict:
+    try:
+        with open(settings.rules_path, "r", encoding="utf-8") as f:
+            rules = json.load(f)
+        
+        rule = next((r for r in rules.get("compliance_rules", []) if r.get("rule_id") == rule_id), None)
+        if not rule:
+            raise HTTPException(status_code=404, detail="Rule not found")
+        return rule
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 
 @app.get("/api/export/violations")

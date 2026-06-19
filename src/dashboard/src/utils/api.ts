@@ -29,6 +29,12 @@ export async function fetchStats(): Promise<DashboardStats> {
   return response.json();
 }
 
+export async function fetchPolicyRules(): Promise<any> {
+  const response = await fetch(`${API_BASE}/api/policy/rules`);
+  if (!response.ok) throw new Error('Failed to fetch policy rules');
+  return response.json();
+}
+
 export async function processVideoPath(videoPath: string): Promise<ApiProcessResponse> {
   const response = await fetch(`${API_BASE}/api/process_video`, {
     method: 'POST',

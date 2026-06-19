@@ -217,110 +217,111 @@
   display: block;
 }
 
-/* ── Factory frame (CSS-drawn floor plan) ── */
-.factory-frame {
+/* ── Radar Digital Twin Scan ── */
+.radar-container {
+  background: radial-gradient(circle at center, #071321 0%, #020408 100%);
+}
+
+.radar-stage {
   position: relative;
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(0deg,   rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    #030b18;
-  background-size: 48px 48px;
-}
-
-/* Scan line overlay */
-.factory-frame::after {
-  content: '';
-  position: absolute;
-  left: 0;
   width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(59,130,246,0.5), transparent);
-  animation: scan-line 3s linear infinite;
-  pointer-events: none;
+  height: 100%;
+  overflow: hidden;
 }
 
-/* HUD corner decorations */
-.factory-frame::before {
-  content: '';
+/* Base Grid */
+.radar-grid {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(135deg, rgba(59,130,246,0.08) 0 40px, transparent 40px),
-    linear-gradient(225deg, rgba(59,130,246,0.08) 0 40px, transparent 40px);
+    linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+  background-size: 30px 30px;
+  transform: perspective(600px) rotateX(45deg);
+  transform-origin: center top;
+  opacity: 0.6;
+}
+
+/* Radar Sweep Gradient */
+.radar-sweep {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(16, 185, 129, 0.1) 60deg,
+    rgba(16, 185, 129, 0.8) 90deg,
+    transparent 90deg
+  );
+  transform-origin: center center;
+  transform: translate(-50%, -50%);
+  animation: radar-spin 4s linear infinite;
+  border-radius: 50%;
   pointer-events: none;
-  background-position: top left, top right;
-  background-size: 40px 40px;
-  background-repeat: no-repeat;
+}
+
+@keyframes radar-spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* Pulsing Nodes */
+.radar-node {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: var(--compliant);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--compliant-glow);
+  transform: translate(-50%, -50%);
+  animation: node-pulse 2s infinite ease-out;
+}
+
+.radar-node.node-1 { top: 30%; left: 40%; animation-delay: 0.5s; }
+.radar-node.node-2 { top: 70%; left: 60%; animation-delay: 1.2s; }
+.radar-node.node-3 { top: 45%; left: 80%; animation-delay: 2.1s; }
+
+@keyframes node-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
 }
 
 .feed-hud {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  z-index: 10;
 }
 
 .feed-hud-top {
   position: absolute;
   top: 10px;
   left: 12px;
-  font-size: 10px;
-  font-family: 'Courier New', monospace;
-  color: rgba(59, 130, 246, 0.8);
-  letter-spacing: 1px;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  color: rgba(16, 185, 129, 0.9);
+  letter-spacing: 1.5px;
   text-transform: uppercase;
   line-height: 1.6;
+  text-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
 }
 
 .feed-hud-top span {
   display: block;
-}
-
-.walkway {
-  position: absolute;
-  left: 8%;
-  top: 62%;
-  width: 82%;
-  height: 14%;
-  border: 2px solid rgba(16, 185, 129, 0.7);
-  transform: skewX(-12deg);
-  background: rgba(16, 185, 129, 0.05);
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.20) inset;
-}
-
-.machine,
-.forklift-shape {
-  position: absolute;
-  border-radius: 6px;
-}
-
-.machine {
-  background: linear-gradient(135deg, #1e293b, #334155);
-  border: 1px solid rgba(100, 116, 139, 0.60);
-}
-
-.machine-a {
-  left: 12%;
-  top: 14%;
-  width: 22%;
-  height: 30%;
-  box-shadow: 0 0 20px rgba(100, 116, 139, 0.20);
-}
-
-.machine-b {
-  right: 14%;
-  top: 18%;
-  width: 28%;
-  height: 26%;
-  box-shadow: 0 0 20px rgba(100, 116, 139, 0.20);
-}
-
-.forklift-shape {
-  left: 42%;
-  top: 52%;
-  width: 16%;
-  height: 10%;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  box-shadow: 0 0 16px rgba(245, 158, 11, 0.40);
 }
 
 /* ── Detection boxes ── */

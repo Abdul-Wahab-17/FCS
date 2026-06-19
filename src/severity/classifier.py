@@ -38,7 +38,7 @@ class SeverityDecision:
 
 
 class SeverityClassifier:
-    """Assign LOW/MEDIUM/HIGH/CRITICAL tiers from policy-derived rules."""
+    """Assign LOW/MEDIUM/HIGH/CRITICAL tiers from policy-derived parsed rules."""
 
     OPERATORS = {
         "<": operator.lt,
@@ -56,13 +56,15 @@ class SeverityClassifier:
     ) -> None:
         self.rules_path = Path(rules_path or settings.rules_path)
         with self.rules_path.open("r", encoding="utf-8") as file:
-            self.rules = json.load(file)
+            parsed_data = json.load(file)
+            # Map by behavior_class
+            self.rules = {r["behavior_class"]: r for r in parsed_data.get("compliance_rules", [])}
         self.context_analyzer = context_analyzer or ContextAnalyzer()
 
     def classify(
         self, detection: dict[str, Any], frame_context: dict[str, Any] | None = None
     ) -> SeverityDecision:
-        """Classify one detection and explain the decision."""
+        """Classify one detection using policy-grounded rules."""
 
         behavior = detection.get("behavior_class")
         rule = self.rules.get(str(behavior))
@@ -74,23 +76,33 @@ class SeverityClassifier:
                 applied_rules=[],
             )
 
-        severity = rule["default_severity"]
-        rationale = rule.get("tier_justification", rule.get("policy_signal", "Default"))
+        base_severity = rule.get("severity_tier", "MEDIUM")
+        policy_callout = rule.get("policy_callout", "NOTICE")
+        rationale = f"Per {rule.get('rule_id', 'Unknown')}: baseline {base_severity} per policy callout {policy_callout}."
+        
         applied_rules: list[str] = []
         context = self.context_analyzer.analyze(detection, frame_context)
 
-        for escalation in rule.get("escalation_rules", []):
+        current_severity = base_severity
+
+        # Apply contextual multipliers only using thresholds mentioned in the policy text
+        for escalation in rule.get("escalation_conditions", []):
             condition = escalation["condition"]
             if self._evaluate_condition(condition, context):
                 next_severity = escalation["new_severity"]
-                severity = higher_severity(severity, next_severity)
-                rationale = escalation["rationale"]
+                current_severity = higher_severity(current_severity, next_severity)
+                rationale = f"Per {rule.get('rule_id', 'Unknown')}: {escalation.get('rationale', rule.get('hazard_description', 'Escalated'))}"
                 applied_rules.append(condition)
 
+        # Ensure CRITICAL SAFETY NOTICE implies at least HIGH
+        if policy_callout == "CRITICAL SAFETY NOTICE" and current_severity in ("LOW", "MEDIUM"):
+            current_severity = "HIGH"
+            rationale = f"Per {rule.get('rule_id')}: {rule.get('hazard_description')}"
+
         return SeverityDecision(
-            severity=SeverityTier(severity),
+            severity=SeverityTier(current_severity),
             rationale=rationale,
-            policy_signal=rule.get("policy_signal", ""),
+            policy_signal=policy_callout,
             applied_rules=applied_rules,
         )
 

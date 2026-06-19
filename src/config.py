@@ -29,11 +29,12 @@ class Settings:
     database_path: Path = PROJECT_ROOT / "outputs" / "violations.db"
     json_log_path: Path = PROJECT_ROOT / "outputs" / "compliance_reports.json"
     csv_log_path: Path = PROJECT_ROOT / "outputs" / "compliance_reports.csv"
-    rules_path: Path = PROJECT_ROOT / "src" / "severity" / "rules.json"
+    rules_path: Path = PROJECT_ROOT / "src" / "severity" / "parsed_rules.json"
+    groq_api_key: str | None = os.getenv("GROQ_API_KEY")
     confidence_threshold: float = float(os.getenv("CONFIDENCE_THRESHOLD", "0.5"))
     detection_frame_stride: int = int(os.getenv("DETECTION_FRAME_STRIDE", "12"))
     detection_max_frames: int = int(os.getenv("DETECTION_MAX_FRAMES", "180"))
-    detection_use_ml: bool = _bool_from_env("DETECTION_USE_ML", False)
+    detection_use_ml: bool = _bool_from_env("DETECTION_USE_ML", True)
     yolo_model: str = os.getenv("YOLO_MODEL", "yolov8n.pt")
     cors_origins: tuple[str, ...] = tuple(
         origin.strip()

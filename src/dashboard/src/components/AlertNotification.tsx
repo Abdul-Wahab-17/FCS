@@ -1,5 +1,6 @@
 import type { Violation } from '../types';
 import { formatBehavior, formatDateTime } from '../utils/formatters';
+import { Siren, AlertTriangle, X } from 'lucide-react';
 
 interface AlertNotificationProps {
   alert: Violation | null;
@@ -21,12 +22,12 @@ export default function AlertNotification({
       aria-live="assertive"
     >
       <div className="alert-notification-body">
-        <span className="alert-icon" aria-hidden="true">
-          {isCritical ? '🚨' : '⚠️'}
+        <span className="alert-icon" aria-hidden="true" style={{ display: 'flex' }}>
+          {isCritical ? <Siren size={24} /> : <AlertTriangle size={24} />}
         </span>
         <div className="alert-notification-text">
           <strong>
-            {isCritical ? '🔴 CRITICAL SAFETY ALERT' : '🟠 HIGH SEVERITY ALERT'}
+            {isCritical ? 'CRITICAL SAFETY ALERT' : 'HIGH SEVERITY ALERT'}
           </strong>
           <span>{formatBehavior(alert.behavior_class)}</span>
           <small>
@@ -39,8 +40,9 @@ export default function AlertNotification({
         onClick={onDismiss}
         type="button"
         aria-label="Dismiss alert"
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       >
-        ✕
+        <X size={18} />
       </button>
     </div>
   );

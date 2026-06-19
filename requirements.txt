@@ -22,3 +22,7 @@ pandas>=2.1
 pytest>=7.4
 pytest-asyncio>=0.21
 httpx>=0.25
+
+pdfplumber>=0.10.3
+groq>=0.4.2
+git+https://github.com/openai/CLIP.git

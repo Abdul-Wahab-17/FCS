@@ -1,3 +1,4 @@
+import { AlertTriangle, RefreshCw, Zap } from 'lucide-react';
 import type { DashboardStats } from '../types';
 
 interface NavbarProps {
@@ -27,7 +28,7 @@ export default function Navbar({
           </svg>
         </div>
         <div>
-          <h1>FactoryGuard</h1>
+          <h1>Nexus Compliance Core</h1>
           <div className="live-indicator">
             <span className="live-dot" />
             Live Monitoring
@@ -61,17 +62,17 @@ export default function Navbar({
 
       {/* Actions */}
       <div className="topbar-actions">
-        {error && <span className="status-text error">⚠ {error}</span>}
+        {error && <span className="status-text error" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><AlertTriangle size={16} /> {error}</span>}
         {loading && (
           <span className="status-text" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <span className="spinner" /> Loading
           </span>
         )}
-        <button className="button secondary" onClick={onRefresh} type="button">
-          ↻ Refresh
+        <button className="button secondary" onClick={onRefresh} type="button" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <RefreshCw size={16} /> Refresh
         </button>
-        <button className="button primary" onClick={onSeedDemo} type="button">
-          ⚡ Seed Demo
+        <button className="button primary" onClick={onSeedDemo} type="button" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Zap size={16} /> Seed Demo
         </button>
       </div>
     </header>

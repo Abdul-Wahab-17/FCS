@@ -1,17 +1,13 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import type { Violation } from '../types';
 import { processVideoPath, uploadVideo } from '../utils/api';
 import { formatBehavior, percent } from '../utils/formatters';
 
 interface LiveFeedMonitorProps {
-  violations: Violation[];
   onProcessed: (reports: Violation[]) => void;
 }
 
-export default function LiveFeedMonitor({
-  violations,
-  onProcessed,
-}: LiveFeedMonitorProps) {
+export default function LiveFeedMonitor({ onProcessed }: LiveFeedMonitorProps) {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [videoPath, setVideoPath] = useState(
@@ -19,18 +15,19 @@ export default function LiveFeedMonitor({
   );
   const [processing, setProcessing] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [scanResults, setScanResults] = useState<Violation[]>([]);
 
-  const visibleDetections = useMemo(() => violations.slice(0, 4), [violations]);
+  const visibleDetections = useMemo(() => scanResults.slice(0, 4), [scanResults]);
 
   const hasCritical = visibleDetections.some((v) => v.severity === 'CRITICAL');
   const hasHigh     = visibleDetections.some((v) => v.severity === 'HIGH');
   const statusLabel = hasCritical
-    ? '🔴 VIOLATION — CRITICAL'
+    ? '🔴 SEVERE INFRACTION DETECTED'
     : hasHigh
-    ? '🟠 VIOLATION — HIGH'
+    ? '🟠 HIGH RISK ANOMALY'
     : visibleDetections.length > 0
-    ? '🟡 VIOLATIONS DETECTED'
-    : '✅ COMPLIANT';
+    ? '🟡 ANOMALY DETECTED'
+    : '✅ OPTIMAL STATE';
 
   const statusCls = hasCritical
     ? 'critical'
@@ -54,10 +51,15 @@ export default function LiveFeedMonitor({
       const result = file
         ? await uploadVideo(file)
         : await processVideoPath(videoPath.trim());
+      setScanResults(result.reports);
       onProcessed(result.reports);
-      setMessage(`✔ ${result.count} compliance record(s) generated`);
+      setMessage(
+        result.count > 0
+          ? `✔ ${result.count} data vectors extracted successfully`
+          : '✘ No violations detected — check the video path or upload a labeled clip'
+      );
     } catch (err) {
-      setMessage(err instanceof Error ? `✘ ${err.message}` : '✘ Processing failed');
+      setMessage(err instanceof Error ? `✘ ${err.message}` : '✘ Telemetry failure');
     } finally {
       setProcessing(false);
     }
@@ -69,29 +71,34 @@ export default function LiveFeedMonitor({
       <div className="panel video-panel">
         <div className="panel-header">
           <div>
-            <h2>📹 Live Feed Monitor</h2>
-            <p className="subtle">Clip inspection · detection overlay · real-time analysis</p>
+            <h2>📹 Real-Time Optical Surveillance</h2>
+            <p className="subtle">Optical array · AI detection overlay · low-latency stream</p>
           </div>
           <span className={`status-pill ${statusCls}`}>{statusLabel}</span>
         </div>
 
-        <div className="video-stage">
+        <div className="video-stage radar-container">
           {previewUrl ? (
             <video src={previewUrl} controls muted />
           ) : (
-            <div className="factory-frame" aria-label="Factory floor preview">
+            <div className="radar-stage" aria-label="Digital Twin Radar Preview">
               {/* HUD overlay */}
               <div className="feed-hud">
                 <div className="feed-hud-top">
-                  <span>CAM-01 · ZONE-A</span>
-                  <span>REC ● LIVE</span>
-                  <span style={{ opacity: 0.55 }}>FPS: 24.0</span>
+                  <span>ARRAY-01 · SECTOR-A</span>
+                  <span>SYNC ● ACTIVE</span>
+                  <span style={{ opacity: 0.55 }}>LATENCY: 12ms</span>
                 </div>
               </div>
-              <div className="walkway" />
-              <div className="machine machine-a" />
-              <div className="machine machine-b" />
-              <div className="forklift-shape" />
+              
+              {/* Radar Grid and Sweep */}
+              <div className="radar-grid"></div>
+              <div className="radar-sweep"></div>
+              
+              {/* Radar Points (pulsing dots simulating detection nodes) */}
+              <div className="radar-node node-1"></div>
+              <div className="radar-node node-2"></div>
+              <div className="radar-node node-3"></div>
             </div>
           )}
 
@@ -101,14 +108,14 @@ export default function LiveFeedMonitor({
               className={`detection-box ${item.severity.toLowerCase()}`}
               key={`${item.event_id}-${index}`}
               style={{
-                left:   `${6 + index * 14}%`,
-                top:    `${12 + index * 12}%`,
-                width:  '20%',
-                height: '26%',
+                left:   `${15 + index * 10}%`,
+                top:    `${20 + index * 15}%`,
+                width:  '18%',
+                height: '22%',
               }}
             >
               <span className="detection-box-label">
-                {item.severity} · {percent(item.confidence)}
+                {item.severity} · MATRIX: {percent(item.confidence)}
               </span>
             </div>
           ))}
@@ -118,11 +125,11 @@ export default function LiveFeedMonitor({
       {/* ── Control panel ── */}
       <aside className="panel control-panel">
         <div className="panel-header">
-          <h2>⚙ Process Clip</h2>
+          <h2>⚙ Execute Matrix Analysis</h2>
         </div>
 
         <label className="field">
-          <span>Dataset path</span>
+          <span>Target Dataset Path</span>
           <input
             value={videoPath}
             onChange={(e) => setVideoPath(e.target.value)}
@@ -132,7 +139,7 @@ export default function LiveFeedMonitor({
         </label>
 
         <label className="file-drop">
-          <span>{file ? `📎 ${file.name}` : '＋ Choose or drop a video file'}</span>
+          <span>{file ? `📎 ${file.name}` : '＋ Inject optical payload (MP4)'}</span>
           <input
             type="file"
             accept="video/*"
@@ -150,10 +157,10 @@ export default function LiveFeedMonitor({
           >
             {processing ? (
               <>
-                <span className="spinner" /> Analysing…
+                <span className="spinner" /> Synthesizing Data…
               </>
             ) : (
-              '▶ Run Detection'
+              '▶ Initialize Scan'
             )}
           </button>
           {file && (
@@ -162,7 +169,7 @@ export default function LiveFeedMonitor({
               type="button"
               onClick={() => handleFileChange(null)}
             >
-              Clear
+              Purge
             </button>
           )}
         </div>
@@ -175,10 +182,10 @@ export default function LiveFeedMonitor({
 
         {/* Recent detections */}
         <div className="detection-summary">
-          <h3>Recent Detections</h3>
+          <h3>Surveillance Telemetry</h3>
           {visibleDetections.length === 0 ? (
             <p className="subtle" style={{ paddingTop: 8 }}>
-              No records yet. Process a clip or seed demo data.
+              Standby mode. Initiate scan to acquire optical data.
             </p>
           ) : (
             visibleDetections.map((item) => (

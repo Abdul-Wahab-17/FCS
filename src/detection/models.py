@@ -30,8 +30,12 @@ class YOLOModelWrapper:
         5: "bus",
         7: "truck",
         9: "traffic light",
+        26: "handbag",
+        28: "suitcase",
+        39: "bottle",
         56: "chair",
         63: "laptop",
+        73: "book",
     }
 
     def __init__(self, model_name: str = "yolov8n.pt") -> None:

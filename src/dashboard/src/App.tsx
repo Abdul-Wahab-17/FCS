@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { History, Activity } from 'lucide-react';
 import AlertNotification from './components/AlertNotification';
 import AlertTimeline from './components/AlertTimeline';
 import HistoricalLog from './components/HistoricalLog';
@@ -9,17 +10,9 @@ import { useWebSocket } from './hooks/useWebSocket';
 import type { Violation, ViolationFilters } from './types';
 import { seedDemo } from './utils/api';
 
-type Tab = 'live' | 'alerts' | 'history';
-
-const TAB_CONFIG: { id: Tab; label: string; icon: string }[] = [
-  { id: 'live',    label: 'Live Feed',   icon: '📹' },
-  { id: 'alerts',  label: 'Alert Timeline', icon: '🔔' },
-  { id: 'history', label: 'Historical Log', icon: '📋' },
-];
-
 export default function App() {
-  const { violations, setViolations, stats, loading, error, refresh } = useFetchData();
-  const [activeTab, setActiveTab] = useState<Tab>('live');
+  const { violations, setViolations, stats, rules, loading, error, refresh } = useFetchData();
+  const [showArchive, setShowArchive] = useState(false);
   const [latestAlert, setLatestAlert] = useState<Violation | null>(null);
 
   const addReports = useCallback(
@@ -53,9 +46,6 @@ export default function App() {
     refresh(filters);
   }
 
-  const criticalCount = violations.filter((v) => v.severity === 'CRITICAL').length;
-  const highCount     = violations.filter((v) => v.severity === 'HIGH').length;
-
   return (
     <main className="app-shell">
       <Navbar
@@ -71,41 +61,33 @@ export default function App() {
         onDismiss={() => setLatestAlert(null)}
       />
 
-      {/* Tabs */}
-      <nav className="tabs" aria-label="Dashboard views">
-        {TAB_CONFIG.map(({ id, label, icon }) => {
-          const count =
-            id === 'alerts'
-              ? criticalCount + highCount
-              : id === 'history'
-              ? violations.length
-              : null;
-
-          return (
-            <button
-              key={id}
-              className={activeTab === id ? 'active' : ''}
-              onClick={() => setActiveTab(id)}
-              type="button"
-              aria-current={activeTab === id ? 'page' : undefined}
-            >
-              <span aria-hidden="true">{icon}</span>
-              {label}
-              {count != null && count > 0 && (
-                <span className="tab-count">{count}</span>
-              )}
-            </button>
-          );
-        })}
-      </nav>
-
       <div className="content-area">
-        {activeTab === 'live' && (
-          <LiveFeedMonitor violations={violations} onProcessed={addReports} />
-        )}
-        {activeTab === 'alerts' && <AlertTimeline violations={violations} />}
-        {activeTab === 'history' && (
-          <HistoricalLog violations={violations} onFilter={handleFilter} />
+        <div className="view-actions" style={{ display: 'flex', justifyContent: 'flex-end', margin: '0 0 16px', gap: '12px' }}>
+            <button 
+                className={`button ${!showArchive ? 'primary' : 'secondary'}`}
+                onClick={() => setShowArchive(false)}
+            >
+                <Activity size={16} /> Operations Matrix
+            </button>
+            <button 
+                className={`button ${showArchive ? 'primary' : 'secondary'}`}
+                onClick={() => setShowArchive(true)}
+            >
+                <History size={16} /> Compliance Archive
+            </button>
+        </div>
+
+        {!showArchive ? (
+            <div className="dashboard-grid">
+                <div className="main-feed-column">
+                    <LiveFeedMonitor onProcessed={addReports} />
+                </div>
+                <div className="sidebar-column">
+                    <AlertTimeline violations={violations} rules={rules} />
+                </div>
+            </div>
+        ) : (
+            <HistoricalLog violations={violations} onFilter={handleFilter} />
         )}
       </div>
     </main>

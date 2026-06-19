@@ -1,0 +1,60 @@
+{
+  "compliance_rules": [
+    {
+      "rule_id": "Section 3.1.2",
+      "behavior_class": "Safe_Walkway_Violation",
+      "safe_indicator": "Person walking within marked yellow boundary",
+      "unsafe_indicator": "Person outside yellow boundary lines",
+      "observable_signals": ["vest_color", "boundary_position"],
+      "severity_tier": "MEDIUM",
+      "policy_callout": "WARNING",
+      "hazard_description": "Risk of collision with moving factory vehicles",
+      "escalation_language": "immediate alert required",
+      "escalation_conditions": [
+        {"condition": "personnel_count > 2", "new_severity": "CRITICAL", "rationale": "Group exposure to vehicle traffic"}
+      ]
+    },
+    {
+      "rule_id": "Section 4.2",
+      "behavior_class": "Unauthorized_Intervention",
+      "safe_indicator": "No personnel within active machine exclusion zone",
+      "unsafe_indicator": "Person interacting with active machinery",
+      "observable_signals": ["person_proximity_to_machinery"],
+      "severity_tier": "HIGH",
+      "policy_callout": "CRITICAL SAFETY NOTICE",
+      "hazard_description": "Severe risk of amputation or crush injury",
+      "escalation_language": "immediate critical alert",
+      "escalation_conditions": [
+        {"condition": "person_proximity_to_machinery < 1.0", "new_severity": "CRITICAL", "rationale": "Extreme proximity to active components"}
+      ]
+    },
+    {
+      "rule_id": "Section 5.5",
+      "behavior_class": "Opened_Panel_Cover",
+      "safe_indicator": "Electrical panel door closed and secured",
+      "unsafe_indicator": "Electrical panel door left open unattended",
+      "observable_signals": ["panel_state"],
+      "severity_tier": "MEDIUM",
+      "policy_callout": "NOTICE",
+      "hazard_description": "Risk of electrical shock or unauthorized tampering",
+      "escalation_language": "notify supervisor",
+      "escalation_conditions": [
+        {"condition": "duration_open > 300", "new_severity": "HIGH", "rationale": "Panel left open beyond safe operational window"}
+      ]
+    },
+    {
+      "rule_id": "Section 6.1",
+      "behavior_class": "Carrying_Overload_with_Forklift",
+      "safe_indicator": "Forklift carrying 2 or fewer blocks",
+      "unsafe_indicator": "Forklift carrying more than 2 blocks",
+      "observable_signals": ["block_count"],
+      "severity_tier": "HIGH",
+      "policy_callout": "WARNING",
+      "hazard_description": "Risk of load tipping or obscured driver vision",
+      "escalation_language": "immediate alert required",
+      "escalation_conditions": [
+        {"condition": "block_count > 3", "new_severity": "CRITICAL", "rationale": "Extreme overload significantly increases tip risk"}
+      ]
+    }
+  ]
+}

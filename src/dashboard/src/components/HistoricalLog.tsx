@@ -36,10 +36,8 @@ export default function HistoricalLog({ violations, onFilter }: HistoricalLogPro
     <section className="panel full-panel">
       <div className="panel-header">
         <div>
-          <h2>📋 Historical Log</h2>
-          <p className="subtle">
-            Searchable compliance records · {violations.length} total
-          </p>
+          <h2>📚 Compliance Archive</h2>
+          <p className="subtle">Comprehensive telemetry logs and structured optical exports · {violations.length} total</p>
         </div>
         <div className="export-group">
           <a

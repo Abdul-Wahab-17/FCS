@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { fetchStats, fetchViolations } from '../utils/api';
+import { fetchStats, fetchViolations, fetchPolicyRules } from '../utils/api';
 import type { DashboardStats, Violation, ViolationFilters } from '../types';
 
 export function useFetchData() {
@@ -9,6 +9,7 @@ export function useFetchData() {
     by_severity: {},
     by_behavior: {}
   });
+  const [rules, setRules] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,12 +17,16 @@ export function useFetchData() {
     setLoading(true);
     setError(null);
     try {
-      const [nextViolations, nextStats] = await Promise.all([
+      const [nextViolations, nextStats, nextRules] = await Promise.all([
         fetchViolations(filters),
-        fetchStats()
+        fetchStats(),
+        fetchPolicyRules().catch(() => ({ compliance_rules: [] })) // Fallback if API missing
       ]);
       setViolations(nextViolations);
       setStats(nextStats);
+      if (nextRules && nextRules.compliance_rules) {
+          setRules(nextRules.compliance_rules);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load data');
     } finally {
@@ -33,5 +38,5 @@ export function useFetchData() {
     refresh();
   }, [refresh]);
 
-  return { violations, setViolations, stats, loading, error, refresh };
+  return { violations, setViolations, stats, rules, loading, error, refresh };
 }

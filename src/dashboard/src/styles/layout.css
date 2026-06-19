@@ -3,6 +3,14 @@
    ============================================================ */
 
 /* ── App shell ── */
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
 .app-shell {
   min-height: 100vh;
   background: var(--gradient-page);
@@ -133,47 +141,30 @@
   gap: 10px;
 }
 
-/* ── Tabs ── */
-.tabs {
+/* ── Dashboard Grid ── */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) 3fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.main-feed-column {
   display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 12px 28px;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.tabs button {
-  border: 1px solid transparent;
-  background: transparent;
-  color: var(--text-secondary);
-  border-radius: 8px;
-  padding: 8px 20px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.sidebar-column {
   display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.tabs button:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
-}
-
-.tabs button.active {
-  background: var(--accent);
-  color: white;
-  box-shadow: 0 0 20px var(--accent-glow);
-  border-color: transparent;
-}
-
-.tabs button .tab-count {
-  background: rgba(255, 255, 255, 0.20);
-  border-radius: 999px;
-  padding: 1px 7px;
-  font-size: 11px;
-  font-weight: 700;
+  flex-direction: column;
+  gap: 20px;
 }
 
 /* ── Main content area ── */
