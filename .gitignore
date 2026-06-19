@@ -1,0 +1,77 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Environment
+.env
+.env.local
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Database and generated outputs
+*.db
+*.sqlite
+*.sqlite3
+outputs/*
+!outputs/.gitkeep
+!outputs/exports/
+outputs/exports/*
+!outputs/exports/.gitkeep
+
+# Dataset and large media
+data/train/**/*.mp4
+data/test/**/*.mp4
+data/**/*.avi
+data/**/*.mov
+data/**/*.mkv
+*.mp4
+*.avi
+*.mov
+*.mkv
+!tests/fixtures/sample_video.mp4
+
+# Model weights
+*.pt
+*.pth
+*.onnx
+
+# Frontend
+node_modules/
+src/dashboard/node_modules/
+src/dashboard/dist/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db

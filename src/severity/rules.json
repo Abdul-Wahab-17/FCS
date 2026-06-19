@@ -1,0 +1,103 @@
+{
+  "Safe_Walkway_Violation": {
+    "description": "Person detected outside green-marked designated safe walkway boundaries.",
+    "observable_indicator": "Person position beyond green walkway boundary.",
+    "detection_approach": "YOLO person detection plus green floor boundary overlap, with dataset-label fallback.",
+    "default_severity": "MEDIUM",
+    "default_zone": "Production_Floor",
+    "default_bounding_box": [120, 180, 360, 720],
+    "label_confidence": 0.87,
+    "policy_section": "Section 3.3.2",
+    "policy_signal": "WARNING callout - highest frequency behavior.",
+    "tier_justification": "Frequent unsafe deviation with injury potential; escalates near machinery or forklift operation.",
+    "default_context": {
+      "person_proximity_to_machinery": 1.5,
+      "forklift_operating": false
+    },
+    "escalation_rules": [
+      {
+        "condition": "person_proximity_to_machinery < 1.0",
+        "new_severity": "HIGH",
+        "rationale": "Pedestrian is within one meter of active machinery."
+      },
+      {
+        "condition": "forklift_operating == true",
+        "new_severity": "HIGH",
+        "rationale": "Walkway breach occurs during forklift operation."
+      }
+    ]
+  },
+  "Unauthorized_Intervention": {
+    "description": "Person without authorization indicators is interacting with equipment.",
+    "observable_indicator": "No/incorrect vest plus hand or body proximity to operating equipment.",
+    "detection_approach": "Person detection, vest color check, and hand-equipment proximity heuristic.",
+    "default_severity": "HIGH",
+    "default_zone": "Equipment_Area",
+    "default_bounding_box": [420, 150, 760, 690],
+    "label_confidence": 0.84,
+    "policy_section": "Section 4.3.2",
+    "policy_signal": "CRITICAL SAFETY NOTICE.",
+    "tier_justification": "Direct manipulation of equipment without clearance creates immediate injury risk.",
+    "default_context": {
+      "personnel_count": 1,
+      "equipment_active": true
+    },
+    "escalation_rules": [
+      {
+        "condition": "personnel_count > 1",
+        "new_severity": "CRITICAL",
+        "rationale": "Multiple unauthorized personnel compound the equipment hazard."
+      },
+      {
+        "condition": "equipment_active == true",
+        "new_severity": "HIGH",
+        "rationale": "Intervention occurs on active equipment."
+      }
+    ]
+  },
+  "Opened_Panel_Cover": {
+    "description": "Electrical or machine panel cover is left open during operations.",
+    "observable_indicator": "Panel door visible in open state.",
+    "detection_approach": "Panel state classifier or template matching, with dataset-label fallback.",
+    "default_severity": "MEDIUM",
+    "default_zone": "Electrical_Panel",
+    "default_bounding_box": [780, 120, 1040, 620],
+    "label_confidence": 0.82,
+    "policy_section": "Section 5.2.2",
+    "policy_signal": "WARNING callout - exposed equipment state.",
+    "tier_justification": "Open panel is hazardous but escalates with duration or personnel proximity.",
+    "default_context": {
+      "duration_open": 60,
+      "person_proximity_to_panel": 2.0
+    },
+    "escalation_rules": [
+      {
+        "condition": "duration_open > 300",
+        "new_severity": "HIGH",
+        "rationale": "Panel has remained open for more than five minutes."
+      },
+      {
+        "condition": "person_proximity_to_panel < 1.0",
+        "new_severity": "HIGH",
+        "rationale": "Personnel are near an exposed panel."
+      }
+    ]
+  },
+  "Carrying_Overload_with_Forklift": {
+    "description": "Forklift is carrying three or more blocks, exceeding the policy threshold.",
+    "observable_indicator": "Block count on forklift forks is greater than or equal to three.",
+    "detection_approach": "Forklift and block counting detector, with dataset-label fallback.",
+    "default_severity": "CRITICAL",
+    "default_zone": "Loading_Area",
+    "default_bounding_box": [300, 260, 980, 760],
+    "label_confidence": 0.9,
+    "policy_section": "Section 6.3.2",
+    "policy_signal": "CRITICAL SAFETY NOTICE - explicit overload threshold.",
+    "tier_justification": "Vehicle instability can cause immediate severe injury or equipment damage.",
+    "default_context": {
+      "block_count": 3,
+      "forklift_operating": true
+    },
+    "escalation_rules": []
+  }
+}

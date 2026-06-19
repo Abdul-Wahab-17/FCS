@@ -1,0 +1,5 @@
+Factory Compliance Policy Placeholder
+
+The original policy PDF was not included in the provided project plan bundle.
+The implemented policy-derived rules are documented in POLICY_EXTRACTION.md
+and encoded in src/severity/rules.json.

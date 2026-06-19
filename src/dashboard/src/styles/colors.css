@@ -1,0 +1,62 @@
+/* ============================================================
+   FACTORY COMPLIANCE DASHBOARD — DESIGN TOKENS
+   Dark-mode first, glassmorphism-ready, high-contrast severity
+   ============================================================ */
+
+:root {
+  /* ── Backgrounds ── */
+  --bg-page:        #050c1a;
+  --bg-surface:     #0b1628;
+  --bg-panel:       rgba(13, 25, 50, 0.85);
+  --bg-panel-solid: #0d1932;
+  --bg-muted:       rgba(255, 255, 255, 0.04);
+  --bg-hover:       rgba(255, 255, 255, 0.07);
+
+  /* ── Glass / Blur ── */
+  --glass-bg:     rgba(15, 30, 60, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.08);
+
+  /* ── Borders ── */
+  --border:       rgba(255, 255, 255, 0.10);
+  --border-focus: rgba(99, 179, 237, 0.60);
+
+  /* ── Text ── */
+  --text-primary:   #e8f0fe;
+  --text-secondary: #8fa3c8;
+  --text-muted:     #4a6080;
+  --text-inverse:   #0d1932;
+
+  /* ── Brand / Accent ── */
+  --accent:       #3b82f6;
+  --accent-light: #60a5fa;
+  --accent-glow:  rgba(59, 130, 246, 0.35);
+  --accent-dark:  #1d4ed8;
+
+  /* ── Severity colours ── */
+  --compliant:       #10b981;
+  --compliant-bg:    rgba(16, 185, 129, 0.12);
+  --compliant-glow:  rgba(16, 185, 129, 0.30);
+
+  --low:             #f59e0b;
+  --low-bg:          rgba(245, 158, 11, 0.12);
+  --low-glow:        rgba(245, 158, 11, 0.30);
+
+  --medium:          #f97316;
+  --medium-bg:       rgba(249, 115, 22, 0.12);
+  --medium-glow:     rgba(249, 115, 22, 0.30);
+
+  --high:            #ef4444;
+  --high-bg:         rgba(239, 68, 68, 0.12);
+  --high-glow:       rgba(239, 68, 68, 0.40);
+
+  --critical:        #dc2626;
+  --critical-bg:     rgba(220, 38, 38, 0.16);
+  --critical-glow:   rgba(220, 38, 38, 0.55);
+
+  /* ── Gradients ── */
+  --gradient-page:    linear-gradient(135deg, #050c1a 0%, #080f22 50%, #060e1c 100%);
+  --gradient-brand:   linear-gradient(90deg, #1d4ed8 0%, #3b82f6 100%);
+  --gradient-surface: linear-gradient(180deg, rgba(15,30,60,0.90) 0%, rgba(10,20,45,0.95) 100%);
+  --gradient-critical: linear-gradient(90deg, #7f1d1d 0%, #991b1b 50%, #7f1d1d 100%);
+  --gradient-high:     linear-gradient(90deg, #7c2d12 0%, #c2410c 50%, #7c2d12 100%);
+}

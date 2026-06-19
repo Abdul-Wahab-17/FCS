@@ -1,0 +1,14 @@
+{
+  "clip_id": "clip_001",
+  "timestamp": 0.0,
+  "behavior_class": "Safe_Walkway_Violation",
+  "description": "Person detected outside green-marked walkway boundaries.",
+  "zone": "Production_Floor",
+  "confidence": 0.87,
+  "frame_number": 0,
+  "bounding_box": [120, 180, 360, 720],
+  "policy_rule_ref": "Section 3.3.2",
+  "metadata": {
+    "person_proximity_to_machinery": 0.5
+  }
+}

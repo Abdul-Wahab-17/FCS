@@ -1,0 +1,97 @@
+/* ============================================================
+   ANIMATIONS — Rich keyframes for premium interactions
+   ============================================================ */
+
+@keyframes flash {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.70; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px var(--critical-glow), 0 0 40px var(--critical-glow);
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 40px var(--critical-glow), 0 0 80px var(--critical-glow);
+    opacity: 0.88;
+  }
+}
+
+@keyframes pulse-glow-high {
+  0%, 100% { box-shadow: 0 0 16px var(--high-glow); }
+  50%       { box-shadow: 0 0 36px var(--high-glow); }
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(-110%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes scan-line {
+  0%   { top: 0%; opacity: 0.7; }
+  100% { top: 100%; opacity: 0; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.25; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+@keyframes border-flow {
+  0%   { border-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
+  50%  { border-color: var(--accent-light); box-shadow: 0 0 20px var(--accent-glow); }
+  100% { border-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
+}
+
+@keyframes card-enter {
+  from {
+    transform: translateX(-8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes detection-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.75; transform: scale(1.04); }
+}
+
+@keyframes count-up {
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}

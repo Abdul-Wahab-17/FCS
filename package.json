@@ -1,0 +1,11 @@
+{
+  "name": "factory-compliance-system",
+  "private": true,
+  "scripts": {
+    "backend": "python src/main.py",
+    "db:init": "python src/database_init.py",
+    "test": "python -m pytest tests",
+    "dashboard:dev": "npm --prefix src/dashboard run dev",
+    "dashboard:build": "npm --prefix src/dashboard run build"
+  }
+}
