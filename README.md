@@ -2,7 +2,7 @@
 
 An advanced, hybrid compliance engine that combines computer vision, machine learning, and deterministic logic to create a fully auditable factory safety platform.
 
-The demo video is in azipped folder in the root folder
+**The demo video is in a zipped folder in the root folder**
 
 ## Overview
 
