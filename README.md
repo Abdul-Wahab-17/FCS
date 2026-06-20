@@ -6,12 +6,7 @@ An advanced, hybrid compliance engine that combines computer vision, machine lea
 
 ## Overview
 
-The Factory Compliance System automatically detects safety violations in factory camera feeds by processing video streams against a dynamically parsed compliance policy.
-
-Unlike traditional static detection systems, FCS features:
-1. **Dynamic Policy Parsing**: It uses a Large Language Model (Groq + Llama-3.3-70b) to read the raw `compliance_policy.pdf` and extract a structured JSON schema of rules, severities, and mathematical escalation conditions.
-2. **Zero-Shot Computer Vision**: It combines the speed of **YOLOv8** for localized object tracking (person, forklift) with the semantic reasoning of **OpenAI CLIP** to determine complex visual states (e.g., whether an electrical panel door is "open" or "closed").
-3. **End-to-End Auditability**: A modern React **Command Center Dashboard** that traces every detected violation via WebSockets directly back to the exact sentence in the source policy document that triggered the alert.
+The Factory Compliance System watches video feeds from factory cameras, automatically spotting unsafe behaviors and equipment use. It matches what it sees against a set of safety rules derived from the compliance policy, then classifies each finding by severity and streams alerts to a live dashboard for immediate action.
 
 ---
 
@@ -30,13 +25,42 @@ The frontend is a React (Vite) application providing three main views: Live Feed
 
 ## Workflows
 
-- **Video Source**: Factory cameras provide continuous HD video streams stored in a `videos/` directory. The system processes each file sequentially or via live stream.
-- **YOLO Detection**: `YOLOv8` detects objects (people, forklifts, safety gear) and provides bounding boxes with confidence scores.
-- **CLIP Reasoning**: OpenAI CLIP evaluates the visual context to infer states (e.g., “safe walkway”, “hazardous zone”) beyond bounding boxes.
-- **Groq Policy Parsing**: The Groq LLM parses the compliance policy PDF into structured JSON rules used by the Severity Classifier.
+- **YOLO Detection**: `YOLOv8` identifies objects such as people, forklifts, and safety gear, returning confidence scores that are visualized on the dashboard.
+- **CLIP Reasoning**: OpenAI CLIP analyzes the visual context to infer higher‑level states (e.g., “safe walkway”, “hazardous zone”) and augments the detection results.
+- **Policy Parsing**: The system parses the compliance policy PDF into structured JSON rules used by the Severity Classifier.
 - **Severity Classification**: Combines detections with parsed rules to assign LOW‑MEDIUM‑HIGH‑CRITICAL levels.
 - **Report Generation & Storage**: Generates a `ComplianceReport` stored in SQLite.
 - **Escalation & Alert Routing**: High/Critical alerts are pushed via WebSockets to the dashboard.
+
+## Detailed Explanation
+
+**Video Ingestion**
+- Factory cameras record HD video files stored under a `videos/` folder. The backend reads each file sequentially or can attach to a live stream.
+
+**Policy Parsing**
+- The compliance policy PDF is processed by a Groq‑hosted LLM which extracts rules, severity levels, and escalation formulas into a JSON file (`parsed_rules.json`). This file drives the rest of the pipeline.
+
+**Detection Engine**
+- `YOLOv8` scans each frame for objects such as people, forklifts, and safety equipment, outputting confidence scores.
+- `CLIP` examines the surrounding visual context to infer higher‑level states (e.g., “safe walkway”).
+- The engine combines these signals to produce a list of potential violations.
+
+**Severity Classification**
+- Each detection is matched against the parsed rules. The system computes a severity tier (LOW, MEDIUM, HIGH, CRITICAL) using deterministic logic.
+
+**Compliance Report Generation**
+- Findings are wrapped in a `ComplianceReport` model and persisted to a SQLite database (`violations.db`).
+
+**Escalation & Real‑Time Alerts**
+- High and Critical alerts are routed through a WebSocket server to the React dashboard.
+- The dashboard flashes a red banner for Critical alerts and an amber banner for High alerts.
+
+**Dashboard Views**
+- **Live Feed Monitor** – Shows the video with detection overlays.
+- **Alert Timeline** – Chronological list of incidents with deduplication (each behavior appears only once per video).
+- **Stats/History** – Summarizes detection counts per severity and per video.
+
+This pipeline runs end‑to‑end automatically once the backend service is started.
 
 ## Prerequisites
 
