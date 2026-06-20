@@ -34,6 +34,43 @@ The frontend is a React (Vite) application providing three main views: Live Feed
 
 ## Detailed Explanation
 
+**Architecture Diagram**
+
+```
+Factory Video
+      │
+      ▼
+Video Reader
+(OpenCV)
+      │
+      ▼
+Object Detection
+(YOLO)
+      │
+      ▼
+Violation Detection Engine
+      │
+      ▼
+Severity Classification
+      │
+      ▼
+Escalation Engine
+      │
+      ├────────► Alert Generation
+      │
+      ▼
+Report Generator
+(JSON)
+      │
+      ▼
+SQLite Database
+(compliance.db)
+      │
+      ▼
+React Dashboard
+```
+
+
 **Video Ingestion**
 - Factory cameras record HD video files stored under a `videos/` folder. The backend reads each file sequentially or can attach to a live stream.
 
