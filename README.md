@@ -2,7 +2,7 @@
 
 An advanced, hybrid compliance engine that combines computer vision, machine learning, and deterministic logic to create a fully auditable factory safety platform.
 
-![Factory Compliance System](https://via.placeholder.com/1200x400.png?text=Factory+Compliance+System)
+The demo video is in azipped folder in the root folder
 
 ## Overview
 
