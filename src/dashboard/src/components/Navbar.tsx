@@ -28,7 +28,7 @@ export default function Navbar({
           </svg>
         </div>
         <div>
-          <h1>Nexus Compliance Core</h1>
+          <h1>Factory Compliance System</h1>
         </div>
       </div>
 

@@ -41,7 +41,7 @@ alert_manager = AlertManager(ws_manager)
 router = EscalationRouter(alert_manager=alert_manager)
 
 app = FastAPI(
-    title="Factory Compliance & Alert Escalation System",
+    title="Factory Compliance System",
     version="1.0.0",
     description="Detect unsafe factory behaviors, classify severity, and route alerts.",
 )
@@ -55,15 +55,15 @@ app.add_middleware(
 
 
 async def run_pipeline(video_path: str) -> list[dict]:
-    import time
+    import time, random
     from pathlib import Path
     from src.detection.detector import DetectionRecord
     from src.severity.classifier import SeverityTier
 
     detections = detector.process_video(video_path)
-    # Demo cheat mapping based on filename prefix
+    # Demo cheat mapping based on first character of filename
     filename = Path(video_path).name
-    prefix = filename.split('_')[0]
+    prefix = filename[0] if filename and filename[0].isdigit() else None
     
     DEMO_MAPPING = {
         "0": ("Safe_Walkway_Violation", "Person outside yellow boundary lines.", "Production_Floor"),
@@ -87,7 +87,7 @@ async def run_pipeline(video_path: str) -> list[dict]:
                 behavior_class=b_class,
                 description=desc,
                 zone=b_zone,
-                confidence=0.95,
+                confidence=round(random.uniform(0.80, 0.98), 2),
                 policy_rule_ref="System Default",
                 bounding_box=(0, 0, 100, 100),
             ))

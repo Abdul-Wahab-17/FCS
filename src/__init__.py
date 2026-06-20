@@ -1,1 +1,1 @@
-"""Factory Compliance & Alert Escalation System backend package."""
+"""Factory Compliance System backend package."""

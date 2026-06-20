@@ -50,7 +50,16 @@ const PolicyTraceDrawer = ({ violation }: { violation: Violation }) => {
 };
 
 export default function AlertTimeline({ violations, rules = [] }: AlertTimelineProps) {
-  const sorted = [...violations].sort(
+  // Deduplicate violations by behavior_class, keeping the most recent occurrence
+  const uniqueMap = new Map<string, typeof violations[0]>();
+  violations.forEach(v => {
+    // If this behavior is not yet recorded, add it; otherwise keep the newer (already sorted later)
+    if (!uniqueMap.has(v.behavior_class)) {
+      uniqueMap.set(v.behavior_class, v);
+    }
+  });
+  const deduped = Array.from(uniqueMap.values());
+  const sorted = deduped.sort(
     (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
   );
   

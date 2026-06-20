@@ -97,31 +97,33 @@ export default function App() {
         )}
         
         {activeTab === 'stats' && (
-            <div className="stats-tab-content">
-                <h2>Global System Metrics</h2>
-                <div className="topbar-metrics" style={{ marginTop: 24 }}>
-                  <div className="metric-pill total">
-                    <strong>{stats.total ?? 0}</strong>
-                    <small>Total Detections</small>
-                  </div>
-                  <div className="metric-pill low-m">
-                    <strong>{stats.by_severity?.LOW ?? 0}</strong>
-                    <small>Low Severity</small>
-                  </div>
-                  <div className="metric-pill med-m">
-                    <strong>{stats.by_severity?.MEDIUM ?? 0}</strong>
-                    <small>Medium Severity</small>
-                  </div>
-                  <div className="metric-pill high-m">
-                    <strong>{stats.by_severity?.HIGH ?? 0}</strong>
-                    <small>High Severity</small>
-                  </div>
-                  <div className="metric-pill crit-m">
-                    <strong>{stats.by_severity?.CRITICAL ?? 0}</strong>
-                    <small>Critical Severity</small>
-                  </div>
-                </div>
+          <div className="stats-tab-content">
+            <h2>System Metrics</h2>
+            <div className="topbar-metrics" style={{ marginTop: 24 }}>
+              <div className="metric-pill total"><strong>{stats.total ?? 0}</strong><small>Total Detections</small></div>
+              <div className="metric-pill low-m"><strong>{stats.by_severity?.LOW ?? 0}</strong><small>Low Severity</small></div>
+              <div className="metric-pill med-m"><strong>{stats.by_severity?.MEDIUM ?? 0}</strong><small>Medium Severity</small></div>
+              <div className="metric-pill high-m"><strong>{stats.by_severity?.HIGH ?? 0}</strong><small>High Severity</small></div>
+              <div className="metric-pill crit-m"><strong>{stats.by_severity?.CRITICAL ?? 0}</strong><small>Critical Severity</small></div>
             </div>
+            <h3 style={{ marginTop: 32 }}>Detections for Current Video</h3>
+            <ul className="current-detections-list" style={{ marginTop: 12 }}>
+              {currentVideoReports.reduce((map, report) => {
+                // keep highest confidence per behavior class
+                const existing = map.get(report.behavior_class);
+                if (!existing || report.confidence > existing.confidence) {
+                  map.set(report.behavior_class, report);
+                }
+                return map;
+              }, new Map<string, typeof currentVideoReports[0]>())
+                .values()
+                .map((r) => (
+                  <li key={r.event_id} style={{ marginBottom: 8 }}>
+                    <strong>{r.behavior_class}</strong>: {Math.round(r.confidence * 100)}% confidence ({r.severity})
+                  </li>
+                ))}
+            </ul>
+          </div>
         )}
 
         {activeTab === 'history' && (
