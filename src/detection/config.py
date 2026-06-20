@@ -22,8 +22,8 @@ SAFE_BEHAVIORS = (
 
 @dataclass(frozen=True)
 class DetectionConfig:
-    confidence_threshold: float = 0.5
+    confidence_threshold: float = 0.35
     frame_stride: int = 12
     max_frames: int = 180
-    use_ml: bool = False
+    use_ml: bool = True
     yolo_model: str = "yolov8n.pt"

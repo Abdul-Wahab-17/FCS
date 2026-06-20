@@ -36,7 +36,7 @@ export default function HistoricalLog({ violations, onFilter }: HistoricalLogPro
     <section className="panel full-panel">
       <div className="panel-header">
         <div>
-          <h2>📚 Compliance Archive</h2>
+          <h2>History</h2>
           <p className="subtle">Comprehensive telemetry logs and structured optical exports · {violations.length} total</p>
         </div>
         <div className="export-group">
@@ -84,7 +84,7 @@ export default function HistoricalLog({ violations, onFilter }: HistoricalLogPro
             {pageRows.length === 0 ? (
               <tr>
                 <td colSpan={6} className="empty-cell">
-                  🔍 No matching records found.
+                  No matching records found.
                 </td>
               </tr>
             ) : (

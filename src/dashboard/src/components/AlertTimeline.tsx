@@ -8,10 +8,10 @@ interface AlertTimelineProps {
 }
 
 const SEVERITY_ICONS: Record<string, string> = {
-  LOW:      '🟡',
-  MEDIUM:   '🟠',
-  HIGH:     '🔴',
-  CRITICAL: '🚨',
+  LOW:      'L',
+  MEDIUM:   'M',
+  HIGH:     'H',
+  CRITICAL: 'C',
 };
 
 const PolicyTraceDrawer = ({ violation }: { violation: Violation }) => {
@@ -68,19 +68,20 @@ export default function AlertTimeline({ violations, rules = [] }: AlertTimelineP
     <section className="panel full-panel">
       <div className="panel-header">
         <div>
-          <h2>🔔 Incident Stream</h2>
+          <h2>Current Video Detections</h2>
           <p className="subtle">
-            Chronological incident stream · {sorted.length} vector
+            Detections for current optical payload · {sorted.length} vector
             {sorted.length !== 1 ? 's' : ''} captured
           </p>
           <div style={{ marginTop: '8px', display: 'flex', gap: '12px', fontSize: '11px' }}>
             <span style={{color: 'var(--text-muted)'}}>Severity Legend:</span>
-            <span>🟡 LOW</span>
-            <span>🟠 MEDIUM</span>
-            <span>🔴 HIGH</span>
-            <span>🚨 CRITICAL</span>
+            <span>LOW</span>
+            <span>MEDIUM</span>
+            <span>HIGH</span>
+            <span>CRITICAL</span>
           </div>
         </div>
+
         {sorted.length > 0 && (
           <span className="status-pill online">
             {sorted.filter((v) => ['HIGH', 'CRITICAL'].includes(v.severity)).length} Active Alerts
@@ -91,7 +92,6 @@ export default function AlertTimeline({ violations, rules = [] }: AlertTimelineP
       <div className="timeline">
         {sorted.length === 0 ? (
           <div className="empty-state">
-            <p style={{ fontSize: 32, margin: '0 0 12px' }}>🛡️</p>
             <p style={{ fontWeight: 600, marginBottom: 4 }}>No incidents logged</p>
             <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>
               Optical sensors report optimal conditions.
@@ -129,22 +129,22 @@ export default function AlertTimeline({ violations, rules = [] }: AlertTimelineP
                 <h3>{formatBehavior(violation.behavior_class)}</h3>
                 <p>{violation.event_description}</p>
                 <div className="timeline-meta">
-                  <span className="badge">📍 {violation.zone}</span>
+                  <span className="badge">Zone: {violation.zone}</span>
                   <button 
                     className="badge" 
                     onClick={() => toggleTrace(violation.event_id)}
                     style={{ cursor: 'pointer', background: 'var(--bg-hover)', border: '1px solid var(--accent)', color: 'var(--accent-light)' }}
                   >
-                    📜 {violation.policy_rule_ref} (Trace)
+                    Trace: {violation.policy_rule_ref}
                   </button>
                   {violation.confidence != null && (
                     <span className="badge">
-                      🎯 {percent(violation.confidence)} confidence
+                      Confidence: {percent(violation.confidence)}
                     </span>
                   )}
                   {violation.clip_id && (
                     <span className="badge" style={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      🎬 {violation.clip_id}
+                      Clip: {violation.clip_id}
                     </span>
                   )}
                 </div>

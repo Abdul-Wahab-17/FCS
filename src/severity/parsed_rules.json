@@ -1,59 +1,104 @@
 {
   "compliance_rules": [
     {
-      "rule_id": "Section 3.1.2",
+      "rule_id": "Section 3.3.2",
       "behavior_class": "Safe_Walkway_Violation",
-      "safe_indicator": "Person walking within marked yellow boundary",
-      "unsafe_indicator": "Person outside yellow boundary lines",
-      "observable_signals": ["vest_color", "boundary_position"],
-      "severity_tier": "MEDIUM",
+      "safe_indicator": "Personnel movement remains within the boundaries of the green-marked Designated Safe Walkway.",
+      "unsafe_indicator": "A person moves or is present outside the boundaries of the green-marked Designated Safe Walkway.",
+      "observable_signals": [
+        "Person detected outside green walkway markings",
+        "Person position beyond green walkway boundaries",
+        "Presence in machinery or vehicle operation zone"
+      ],
+      "severity_tier": "HIGH",
       "policy_callout": "WARNING",
-      "hazard_description": "Risk of collision with moving factory vehicles",
-      "escalation_language": "immediate alert required",
+      "hazard_description": "Deviation from the walkway places personnel in proximity to forklift and machinery hazards.",
+      "escalation_language": "will be treated as an unsafe behavior event requiring immediate response",
       "escalation_conditions": [
-        {"condition": "personnel_count > 2", "new_severity": "CRITICAL", "rationale": "Group exposure to vehicle traffic"}
+        {
+          "condition": "person detected outside green-marked walkway boundaries",
+          "new_severity": "HIGH",
+          "rationale": "Exposure to forklift and machinery hazards outside designated pedestrian zone"
+        }
       ]
     },
     {
-      "rule_id": "Section 4.2",
+      "rule_id": "Section 4.3.2",
       "behavior_class": "Unauthorized_Intervention",
-      "safe_indicator": "No personnel within active machine exclusion zone",
-      "unsafe_indicator": "Person interacting with active machinery",
-      "observable_signals": ["person_proximity_to_machinery"],
-      "severity_tier": "HIGH",
+      "safe_indicator": "Person interacts with production equipment while wearing the designated green safety vest and required safety equipment.",
+      "unsafe_indicator": "Person interacts with or adjusts production equipment without the designated green safety vest and/or without required safety equipment.",
+      "observable_signals": [
+        "Person interacting with equipment",
+        "Red-black vest while interacting with equipment",
+        "Any non-green vest while interacting with equipment",
+        "Missing required safety equipment",
+        "Absence of observable authorization indicators"
+      ],
+      "severity_tier": "CRITICAL",
       "policy_callout": "CRITICAL SAFETY NOTICE",
-      "hazard_description": "Severe risk of amputation or crush injury",
-      "escalation_language": "immediate critical alert",
+      "hazard_description": "Unauthorized interaction with equipment creates risk of injury to the individual and others and may disrupt production processes.",
+      "escalation_language": "Any person seen interacting with equipment who is not wearing the green vest must be assumed to be performing an Unauthorized Intervention.",
       "escalation_conditions": [
-        {"condition": "person_proximity_to_machinery < 1.0", "new_severity": "CRITICAL", "rationale": "Extreme proximity to active components"}
+        {
+          "condition": "person interacting with equipment without green vest",
+          "new_severity": "CRITICAL",
+          "rationale": "Green vest is the primary observable indicator of authorization"
+        },
+        {
+          "condition": "person interacting with equipment without required safety equipment",
+          "new_severity": "CRITICAL",
+          "rationale": "Required safety protections are absent"
+        },
+        {
+          "condition": "person intervening without observable authorization indicators",
+          "new_severity": "CRITICAL",
+          "rationale": "Authorization status cannot be verified"
+        }
       ]
     },
     {
-      "rule_id": "Section 5.5",
+      "rule_id": "Section 5.2.2",
       "behavior_class": "Opened_Panel_Cover",
-      "safe_indicator": "Electrical panel door closed and secured",
-      "unsafe_indicator": "Electrical panel door left open unattended",
-      "observable_signals": ["panel_state"],
-      "severity_tier": "MEDIUM",
-      "policy_callout": "NOTICE",
-      "hazard_description": "Risk of electrical shock or unauthorized tampering",
-      "escalation_language": "notify supervisor",
-      "escalation_conditions": [
-        {"condition": "duration_open > 300", "new_severity": "HIGH", "rationale": "Panel left open beyond safe operational window"}
-      ]
-    },
-    {
-      "rule_id": "Section 6.1",
-      "behavior_class": "Carrying_Overload_with_Forklift",
-      "safe_indicator": "Forklift carrying 2 or fewer blocks",
-      "unsafe_indicator": "Forklift carrying more than 2 blocks",
-      "observable_signals": ["block_count"],
+      "safe_indicator": "Electrical panel cover connected to a production machine is fully closed.",
+      "unsafe_indicator": "Electrical panel cover connected to a production machine is left in the open position.",
+      "observable_signals": [
+        "Panel cover visibly open",
+        "Electrical panel in open-cover state during production operations",
+        "Protective cover not fully closed"
+      ],
       "severity_tier": "HIGH",
       "policy_callout": "WARNING",
-      "hazard_description": "Risk of load tipping or obscured driver vision",
-      "escalation_language": "immediate alert required",
+      "hazard_description": "Open panel covers remove the protective barrier between personnel and electrical components.",
+      "escalation_language": "The automated detection system monitors panel cover status continuously and will generate an alert whenever an open-cover condition is observed.",
       "escalation_conditions": [
-        {"condition": "block_count > 3", "new_severity": "CRITICAL", "rationale": "Extreme overload significantly increases tip risk"}
+        {
+          "condition": "panel cover observed open during production operations",
+          "new_severity": "HIGH",
+          "rationale": "Unsafe condition regardless of duration or personnel proximity"
+        }
+      ]
+    },
+    {
+      "rule_id": "Section 6.3.2",
+      "behavior_class": "Carrying_Overload_with_Forklift",
+      "safe_indicator": "Forklift carries two (2) or fewer standardized blocks in a single load.",
+      "unsafe_indicator": "Forklift carries three (3) or more standardized blocks in a single load.",
+      "observable_signals": [
+        "Three or more blocks on forklift forks",
+        "Forklift traveling with overloaded block count",
+        "Forklift maneuvering with three or more blocks",
+        "Forklift loading/unloading with three or more blocks"
+      ],
+      "severity_tier": "CRITICAL",
+      "policy_callout": "CRITICAL SAFETY NOTICE",
+      "hazard_description": "Overloaded forklift operation creates risks associated with vehicle instability.",
+      "escalation_language": "Any observed forklift load of three or more standardized blocks will be treated as a Carrying Overload with Forklift event and will trigger an immediate alert.",
+      "escalation_conditions": [
+        {
+          "condition": "block_count >= 3",
+          "new_severity": "CRITICAL",
+          "rationale": "Policy defines three or more blocks as an overload with immediate alert requirement"
+        }
       ]
     }
   ]

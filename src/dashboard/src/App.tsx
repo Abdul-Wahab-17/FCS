@@ -12,8 +12,9 @@ import { seedDemo } from './utils/api';
 
 export default function App() {
   const { violations, setViolations, stats, rules, loading, error, refresh } = useFetchData();
-  const [showArchive, setShowArchive] = useState(false);
+  const [activeTab, setActiveTab] = useState<'operations' | 'stats' | 'history'>('operations');
   const [latestAlert, setLatestAlert] = useState<Violation | null>(null);
+  const [currentVideoReports, setCurrentVideoReports] = useState<Violation[]>([]);
 
   const addReports = useCallback(
     (reports: Violation[]) => {
@@ -22,6 +23,7 @@ export default function App() {
         ['HIGH', 'CRITICAL'].includes(item.severity)
       );
       if (alert) setLatestAlert(alert);
+      setCurrentVideoReports(reports);
       refresh();
     },
     [refresh, setViolations]
@@ -62,31 +64,67 @@ export default function App() {
       />
 
       <div className="content-area">
-        <div className="view-actions" style={{ display: 'flex', justifyContent: 'flex-end', margin: '0 0 16px', gap: '12px' }}>
+        <div className="view-actions" style={{ display: 'flex', justifyContent: 'flex-start', margin: '0 0 16px', gap: '8px' }}>
             <button 
-                className={`button ${!showArchive ? 'primary' : 'secondary'}`}
-                onClick={() => setShowArchive(false)}
+                className={`button ${activeTab === 'operations' ? 'primary' : 'secondary'}`}
+                onClick={() => setActiveTab('operations')}
             >
-                <Activity size={16} /> Operations Matrix
+                <Activity size={16} /> Video Analysis
             </button>
             <button 
-                className={`button ${showArchive ? 'primary' : 'secondary'}`}
-                onClick={() => setShowArchive(true)}
+                className={`button ${activeTab === 'stats' ? 'primary' : 'secondary'}`}
+                onClick={() => setActiveTab('stats')}
             >
-                <History size={16} /> Compliance Archive
+                <Activity size={16} /> Stats
+            </button>
+            <button 
+                className={`button ${activeTab === 'history' ? 'primary' : 'secondary'}`}
+                onClick={() => setActiveTab('history')}
+            >
+                <History size={16} /> History
             </button>
         </div>
 
-        {!showArchive ? (
+        {activeTab === 'operations' && (
             <div className="dashboard-grid">
                 <div className="main-feed-column">
                     <LiveFeedMonitor onProcessed={addReports} />
                 </div>
                 <div className="sidebar-column">
-                    <AlertTimeline violations={violations} rules={rules} />
+                    <AlertTimeline violations={currentVideoReports} rules={rules} />
                 </div>
             </div>
-        ) : (
+        )}
+        
+        {activeTab === 'stats' && (
+            <div className="stats-tab-content">
+                <h2>Global System Metrics</h2>
+                <div className="topbar-metrics" style={{ marginTop: 24 }}>
+                  <div className="metric-pill total">
+                    <strong>{stats.total ?? 0}</strong>
+                    <small>Total Detections</small>
+                  </div>
+                  <div className="metric-pill low-m">
+                    <strong>{stats.by_severity?.LOW ?? 0}</strong>
+                    <small>Low Severity</small>
+                  </div>
+                  <div className="metric-pill med-m">
+                    <strong>{stats.by_severity?.MEDIUM ?? 0}</strong>
+                    <small>Medium Severity</small>
+                  </div>
+                  <div className="metric-pill high-m">
+                    <strong>{stats.by_severity?.HIGH ?? 0}</strong>
+                    <small>High Severity</small>
+                  </div>
+                  <div className="metric-pill crit-m">
+                    <strong>{stats.by_severity?.CRITICAL ?? 0}</strong>
+                    <small>Critical Severity</small>
+                  </div>
+                </div>
+            </div>
+        )}
+
+        {activeTab === 'history' && (
             <HistoricalLog violations={violations} onFilter={handleFilter} />
         )}
       </div>

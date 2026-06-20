@@ -54,7 +54,7 @@ body {
   width: 36px;
   height: 36px;
   background: var(--gradient-brand);
-  border-radius: 10px;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -83,7 +83,7 @@ body {
   width: 7px;
   height: 7px;
   background: var(--compliant);
-  border-radius: 50%;
+  border-radius: 0;
   animation: blink 1.4s ease-in-out infinite;
   box-shadow: 0 0 8px var(--compliant-glow);
 }
@@ -101,7 +101,7 @@ body {
   flex-direction: column;
   align-items: center;
   padding: 6px 14px;
-  border-radius: 999px;
+  border-radius: 0;
   border: 1px solid var(--border);
   background: var(--bg-muted);
   min-width: 64px;
@@ -178,7 +178,7 @@ body {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
-  border-radius: 16px;
+  border-radius: 0;
   padding: 20px;
   transition: box-shadow 0.2s ease;
 }

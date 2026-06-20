@@ -29,34 +29,6 @@ export default function Navbar({
         </div>
         <div>
           <h1>Nexus Compliance Core</h1>
-          <div className="live-indicator">
-            <span className="live-dot" />
-            Live Monitoring
-          </div>
-        </div>
-      </div>
-
-      {/* Metrics */}
-      <div className="topbar-metrics" aria-live="polite">
-        <div className="metric-pill total">
-          <strong>{stats.total ?? 0}</strong>
-          <small>Total</small>
-        </div>
-        <div className="metric-pill low-m">
-          <strong>{bySev.LOW ?? 0}</strong>
-          <small>Low</small>
-        </div>
-        <div className="metric-pill med-m">
-          <strong>{bySev.MEDIUM ?? 0}</strong>
-          <small>Medium</small>
-        </div>
-        <div className="metric-pill high-m">
-          <strong>{bySev.HIGH ?? 0}</strong>
-          <small>High</small>
-        </div>
-        <div className="metric-pill crit-m">
-          <strong>{bySev.CRITICAL ?? 0}</strong>
-          <small>Critical</small>
         </div>
       </div>
 
@@ -68,12 +40,6 @@ export default function Navbar({
             <span className="spinner" /> Loading
           </span>
         )}
-        <button className="button secondary" onClick={onRefresh} type="button" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <RefreshCw size={16} /> Refresh
-        </button>
-        <button className="button primary" onClick={onSeedDemo} type="button" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Zap size={16} /> Seed Demo
-        </button>
       </div>
     </header>
   );
